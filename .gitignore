@@ -1,0 +1,9 @@
+*.out
+*.
+*.pdf
+*.docx
+*.odt
+*.ppt
+*.pptx
+*.txt
+.vscode/
