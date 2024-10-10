@@ -22,7 +22,6 @@ Implement a recursive descent parser for the given context-free grammar (CFG), d
 */
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <string.h>
 
 #define MAX 1024
@@ -39,17 +38,25 @@ void V();
 void N();
 void D();
 
+void removespaces()
+{
+    while(string[lookahead] == ' '){
+        lookahead++;
+    }
+}
+
 void check()
 {
+    removespaces();
     if(lookahead == string_len){
-        printf("\nAccepted");
+        printf("Accepted\n");
         exit(0);
     }
 }
 
 void error()
 {
-    printf("\nRejected");
+    printf("Rejected\n");
     exit(0);
 }
 
@@ -61,79 +68,93 @@ void S()
 
 void E()
 {
-    T();
-    while(string[lookahead] == '+' || string[lookahead] == '-'){
+    removespaces();
+    T(); 
+    removespaces();
+    while (string[lookahead] == '+' || string[lookahead] == '-') {  
         lookahead++;
+        removespaces();
         T();
+        removespaces();
     }
 }
 
 void T()
 {
-    F();
-    while(string[lookahead] == '*' || string[lookahead] == '/'){
+    removespaces();
+    F();  
+    removespaces();
+    while (string[lookahead] == '*' || string[lookahead] == '/') {  
         lookahead++;
+        removespaces();
         F();
+        removespaces();
     }
 }
 
 void F()
 {
-    if(string[lookahead]=='('){
+    removespaces();
+    if(string[lookahead] == '('){ 
         lookahead++;
-        E();
+        removespaces();
+        E();  
         if(string[lookahead] == ')'){
             lookahead++;
-        }else{
-            error();
+            removespaces();
+        } else {
+            error();  
         }
-    }else if(string[lookahead] == '-' || string[lookahead] == '+'){
+    } else if (string[lookahead] == '+' || string[lookahead] == '-') { 
         lookahead++;
-        F();
-    }else if(string[lookahead] >= '0' && string[lookahead] <= '9'){
+        removespaces();
+        F();  
+    } else if (string[lookahead] >= '0' && string[lookahead] <= '9') { 
         N();        
-    }else if(string[lookahead] == 'x' || string[lookahead] == 'y' || string[lookahead] == 'z'){
+    } else if (string[lookahead] == 'x' || string[lookahead] == 'y' || string[lookahead] == 'z') { 
         V();
-    }else{
+    } else {
         error();
     }
 }
 
 void V()
 {
-    if(string[lookahead] =='x' || string[lookahead] == 'y' || string[lookahead] == 'z'){
+    if (string[lookahead] == 'x' || string[lookahead] == 'y' || string[lookahead] == 'z') { 
         lookahead++;
-    }else{
+        removespaces();
+    } else {
         error();
     }
 }
 
 void N()
 {
-    D();
-    while (string[lookahead] >= '0' && string[lookahead] <= '9'){
+    removespaces();
+    D(); 
+    removespaces();
+    while (string[lookahead] >= '0' && string[lookahead] <= '9') {  // N → DN
         D();
+        removespaces();
     }
 }
-
 
 void D()
 {
-    if(string[lookahead]>='0' && string[lookahead] <= '9'){
+    if (string[lookahead] >= '0' && string[lookahead] <= '9') {  // D → 0-9
         lookahead++;
-    }else{
+        removespaces();
+    } else {
         error();
     }
 }
-    
+
 int main(int argc, char* argv[])
 {
-    printf("Enter input string : ");
-    scanf("%s",string);
+    scanf("%[^\n]s", string);
+    string_len = strlen(string);
     //printf("\nString : %s", string);
     //printf("\nString len : %ld", strlen(string));
-    string_len = strlen(string);
-    
     S();
     return 0;
 }
